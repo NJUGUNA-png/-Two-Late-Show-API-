@@ -1,15 +1,13 @@
-from server.app import db
+from models.user import db
 
 class Guest(db.Model):
     __tablename__ = 'guests'
-
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    profession = db.Column(db.String(100), nullable=False)
+    name = db.Column(db.String(120), nullable=False)
+    occupation = db.Column(db.String(120), nullable=False)
+    appearances = db.relationship('Appearance', backref='guest', cascade='all, delete-orphan')
 
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "name": self.name,
-            "profession": self.profession
-        }
+    def __repr__(self):
+        return f"<Guest(name={self.name}, occupation={self.occupation})>"
+
+    

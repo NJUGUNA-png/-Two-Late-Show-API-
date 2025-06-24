@@ -1,5 +1,9 @@
 import os
-SQLALCHEMY_DATABASE_URI = "postgresql://postgres:1234@localhost:5432/late_show_db"
+from dotenv import load_dotenv
 
-SQLALCHEMY_TRACK_MODIFICATIONS = False
-SECRET_KEY = "supersecretkey"
+load_dotenv()
+
+class Config:
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URI")
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
