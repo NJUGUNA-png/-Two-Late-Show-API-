@@ -12,6 +12,7 @@ psycopg2-binary = "*"
 pipenv = "*"
 shell = "*"
 python-dotenv = "*"
+faker = "*"
 
 [dev-packages]
 

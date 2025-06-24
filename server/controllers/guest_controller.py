@@ -1,9 +1,17 @@
-from flask import Blueprint, jsonify
-from server.models.guest import Guest
+from flask import Blueprint, jsonify, make_response
+from flask_restful import Api, Resource
+from models import Guest, db
 
-guest_bp = Blueprint("guests", __name__)
+guest_bp = Blueprint('guest', __name__)
+api = Api(guest_bp)
 
-@guest_bp.route("/", methods=["GET"])
-def get_guests():
-    guests = Guest.query.all()
-    return jsonify([{"id": g.id, "name": g.name, "occupation": g.occupation} for g in guests])
+class GuestList(Resource):
+    def get(self):
+        guests = db.session.query(Guest).all()
+        if not guests:
+            return make_response(jsonify({'message': 'No guests found', 'guests': []}), 200)
+
+        guest_list = [guest.to_dict() for guest in guests]
+        return make_response(jsonify(guest_list), 200)
+
+api.add_resource(GuestList, '/guests')
