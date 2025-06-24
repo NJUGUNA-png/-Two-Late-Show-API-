@@ -1,4 +1,10 @@
-from models.user import db
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy_serializer import SerializerMixin
 
-# This file initializes the models package, allowing for the import of model classes from this directory.
-# The db object is imported from user.py for use in all models.
+db = SQLAlchemy()
+SerializerMixin = SerializerMixin
+
+from .user import User
+from .guest import Guest
+from .episode import Episode
+from .appearance import Appearance

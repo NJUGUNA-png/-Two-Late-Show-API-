@@ -7,7 +7,7 @@ from flask_migrate import Migrate
 from flask_jwt_extended import JWTManager, get_jwt
 from jwt.exceptions import ExpiredSignatureError
 from config import Config
-from models import db
+from models import db, TokenBlocklist
 
 # from controllers import guest_bp, episode_bp, appearance_bp, auth_bp
 
