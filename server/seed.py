@@ -1,67 +1,27 @@
-import sys
-import os
+from models import db
+from server.models.guest import Guest
+from server.models.episode import Episode
+from server.models.appearance import Appearance
+from flask import Flask
+from server.app import create_app
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from random import randint, sample, choice as rc
-from datetime import date, timedelta
-from faker import Faker
-from app import app
-from models import db, Guest, Episode, Appearance, User
-
-fake = Faker()
+app = create_app()
 
 with app.app_context():
-    print("Seeding realistic data...")
+    db.drop_all()
+    db.create_all()
 
-    try:
-
-        Appearance.query.delete()
-        Guest.query.delete()
-        Episode.query.delete()
-        User.query.delete()
-        db.session.commit()
-
+    guest1 = Guest(name="Roddy Rich", occupation="Actor")
+    guest2 = Guest(name="Travis Scott", occupation="Singer")
     
-        occupations = [
-            "Actor", "Comedian", "Politician", "Musician", "Author",
-            "Scientist", "Entrepreneur", "Athlete", "Chef", "YouTuber"
-        ]
+    ep1 = Episode(date="2023-06-01", number=101)
+    ep2 = Episode(date="2023-06-02", number=102)
 
-        guests = [Guest(name=fake.name(), occupation=rc(occupations)) for _ in range(10)]
-        db.session.add_all(guests)
-        db.session.commit()
+    db.session.add_all([guest1, guest2, ep1, ep2])
+    db.session.commit()
 
-        
-        episodes = [
-            Episode(
-                date=date.today() - timedelta(weeks=i),
-                number=i + 1
-            ) for i in range(10)
-        ]
-        db.session.add_all(episodes)
-        db.session.commit()
+    app1 = Appearance(rating=5, guest_id=guest1.id, episode_id=ep1.id)
+    app2 = Appearance(rating=4, guest_id=guest2.id, episode_id=ep2.id)
 
-        
-        appearances = []
-        for episode in episodes:
-            selected_guests = sample(guests, randint(1, 3))
-            for guest in selected_guests:
-                appearances.append(Appearance(
-                    guest_id=guest.id,
-                    episode_id=episode.id,
-                    rating=randint(2, 5)
-                ))
-        db.session.add_all(appearances)
-
-        
-        test_user = User(username="latetest")
-        test_user.set_password("securepass123")
-        db.session.add(test_user)
-
-        db.session.commit()
-        print(f"Seeded {len(guests)} guests, {len(episodes)} episodes, {len(appearances)} appearances.")
-        print("Done seeding realistic data.")
-
-    except Exception as e:
-        db.session.rollback()
-        print("An error occurred during seeding:", e)
+    db.session.add_all([app1, app2])
+    db.session.commit()

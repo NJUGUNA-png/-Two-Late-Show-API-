@@ -1,17 +1,10 @@
-from . import db, SerializerMixin
-from sqlalchemy.ext.associationproxy import association_proxy
-from .appearance import Appearance
+from server.models import db
 
-class Episode(db.Model, SerializerMixin):
-    __tablename__= "episodes"
-
-    serialize_rules = ('-appearances.episode',)
+class Episode(db.Model):
+    __tablename__ = "episodes"
 
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.Date, nullable=False)
+    date = db.Column(db.String, nullable=False)
     number = db.Column(db.Integer, nullable=False)
-    appearances = db.relationship("Appearance", back_populates="episode", cascade="all, delete-orphan")
-    guests = association_proxy("appearances", "guest", creator=lambda guest: Appearance(guest=guest))
 
-    def __repr__(self):
-        return f"<Episode id={self.id} number={self.number} date={self.date}>"
+    appearances = db.relationship("Appearance", backref="episode", cascade="all, delete-orphan")
